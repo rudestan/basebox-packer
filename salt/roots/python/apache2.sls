@@ -5,18 +5,18 @@ apache2:
     - running
     - reload: True    
     - watch:
-      - file: /etc/apache2/sites-available/pyblog.dev.conf
-      
-/etc/apache2/sites-available/pyblog.dev.conf:
+      - file: pyblog
+
+pyblog:
   file.managed:
+    - name: /etc/apache2/sites-available/pyblog.dev.conf
     - source: salt://conf/pyblog.dev.conf
 
-    
-/etc/apache2/sites-enabled/pyblog.dev.conf:
-  file.symlink:
-    - target: ../sites-available/pyblog.dev.conf    
-    - require:
-      - file.managed: /etc/apache2/sites-available/pyblog.dev.conf    
+a2ensite pyblog.dev.conf:
+  cmd.wait:
+    - unless: test -L /etc/apache2/sites-enabled/pyblog.dev.conf
+    - watch:
+      - file: pyblog   
         
 /home/srv:
   file.directory:  
